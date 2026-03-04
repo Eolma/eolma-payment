@@ -4,7 +4,6 @@ import com.eolma.common.event.DomainEvent;
 import com.eolma.common.event.EventType;
 import com.eolma.common.event.payload.AuctionCompletedEvent;
 import com.eolma.payment.application.usecase.CreatePaymentUseCase;
-import com.eolma.payment.domain.model.ProcessedEvent;
 import com.eolma.payment.domain.repository.ProcessedEventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class AuctionEventConsumer {
                 return;
             }
 
-            // 멱등성 체크
             if (processedEventRepository.existsByEventId(event.id())) {
                 log.debug("Duplicate event skipped: eventId={}", event.id());
                 ack.acknowledge();
@@ -48,14 +46,13 @@ public class AuctionEventConsumer {
                     event.payload(), AuctionCompletedEvent.class);
 
             createPaymentUseCase.execute(
+                    event.id(),
                     payload.auctionId(),
                     payload.productId(),
                     payload.winnerId(),
                     payload.sellerId(),
                     payload.finalPrice()
             );
-
-            processedEventRepository.save(new ProcessedEvent(event.id()));
 
             log.info("Auction completed event processed: auctionId={}, winnerId={}",
                     payload.auctionId(), payload.winnerId());
@@ -64,7 +61,6 @@ public class AuctionEventConsumer {
 
         } catch (Exception e) {
             log.error("Failed to process auction event: eventId={}", event.id(), e);
-            // ack 하지 않아 재시도
         }
     }
 }

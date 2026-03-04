@@ -107,10 +107,6 @@ public class Payment {
         this.cancelledAt = LocalDateTime.now();
     }
 
-    public void markFailed(String reason) {
-        this.failureReason = reason;
-    }
-
     public boolean isPending() {
         return this.status == PaymentStatus.PENDING;
     }

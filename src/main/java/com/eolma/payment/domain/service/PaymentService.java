@@ -6,13 +6,11 @@ import com.eolma.payment.domain.model.Payment;
 import com.eolma.payment.domain.model.PaymentStatus;
 import com.eolma.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
 public class PaymentService {
 
