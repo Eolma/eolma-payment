@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eolma_payment
+    username: eolma
+    password: eolma-local
+    driver-class-name: org.postgresql.Driver
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+toss:
+  payments:
+    secret-key: test_sk_yourTestSecretKey
+    base-url: https://api.tosspayments.com/v1
+
+logging:
+  level:
+    root: INFO
+    com.eolma.payment: DEBUG
+    org.hibernate.SQL: DEBUG

@@ -3,13 +3,9 @@ server:
 
 spring:
   application:
-    name: payment-service
-
-  datasource:
-    url: jdbc:postgresql://localhost:5432/eolma_payment
-    username: eolma
-    password: eolma-local
-    driver-class-name: org.postgresql.Driver
+    name: eolma-payment
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   jpa:
     hibernate:
@@ -19,22 +15,15 @@ spring:
       hibernate:
         format_sql: true
 
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
   kafka:
-    bootstrap-servers: localhost:9092
     consumer:
       group-id: payment-service
-
-toss:
-  payments:
-    secret-key: ${TOSS_SECRET_KEY:test_sk_yourTestSecretKey}
-    base-url: https://api.tosspayments.com/v1
 
 payment:
   fee-rate: 0.035
   deadline-hours: 24
-
-logging:
-  level:
-    root: INFO
-    com.eolma.payment: DEBUG
-    org.hibernate.SQL: DEBUG
