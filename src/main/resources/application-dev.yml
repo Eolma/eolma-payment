@@ -10,7 +10,7 @@ spring:
 
 toss:
   payments:
-    secret-key: test_sk_yourTestSecretKey
+    secret-key: ${TOSS_SECRET_KEY}
     base-url: https://api.tosspayments.com/v1
 
 logging:
