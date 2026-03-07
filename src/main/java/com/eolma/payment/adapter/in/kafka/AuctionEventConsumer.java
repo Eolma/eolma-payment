@@ -3,6 +3,7 @@ package com.eolma.payment.adapter.in.kafka;
 import com.eolma.common.event.DomainEvent;
 import com.eolma.common.event.EventType;
 import com.eolma.common.event.payload.AuctionCompletedEvent;
+import com.eolma.common.event.payload.InstantBuyStartedEvent;
 import com.eolma.payment.application.usecase.CreatePaymentUseCase;
 import com.eolma.payment.domain.repository.ProcessedEventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,36 +32,57 @@ public class AuctionEventConsumer {
         DomainEvent<?> event = record.value();
 
         try {
-            if (!EventType.AUCTION_COMPLETED.equals(event.type())) {
-                ack.acknowledge();
-                return;
-            }
-
             if (processedEventRepository.existsByEventId(event.id())) {
                 log.debug("Duplicate event skipped: eventId={}", event.id());
                 ack.acknowledge();
                 return;
             }
 
-            AuctionCompletedEvent payload = objectMapper.convertValue(
-                    event.payload(), AuctionCompletedEvent.class);
-
-            createPaymentUseCase.execute(
-                    event.id(),
-                    payload.auctionId(),
-                    payload.productId(),
-                    payload.winnerId(),
-                    payload.sellerId(),
-                    payload.finalPrice()
-            );
-
-            log.info("Auction completed event processed: auctionId={}, winnerId={}",
-                    payload.auctionId(), payload.winnerId());
+            switch (event.type()) {
+                case EventType.AUCTION_COMPLETED -> handleAuctionCompleted(event);
+                case EventType.INSTANT_BUY_STARTED -> handleInstantBuyStarted(event);
+                default -> { }
+            }
 
             ack.acknowledge();
 
         } catch (Exception e) {
-            log.error("Failed to process auction event: eventId={}", event.id(), e);
+            log.error("Failed to process auction event: eventId={}, type={}", event.id(), event.type(), e);
         }
+    }
+
+    private void handleAuctionCompleted(DomainEvent<?> event) {
+        AuctionCompletedEvent payload = objectMapper.convertValue(
+                event.payload(), AuctionCompletedEvent.class);
+
+        createPaymentUseCase.execute(
+                event.id(),
+                payload.auctionId(),
+                payload.productId(),
+                payload.winnerId(),
+                payload.sellerId(),
+                payload.finalPrice()
+        );
+
+        log.info("Auction completed event processed: auctionId={}, winnerId={}",
+                payload.auctionId(), payload.winnerId());
+    }
+
+    private void handleInstantBuyStarted(DomainEvent<?> event) {
+        InstantBuyStartedEvent payload = objectMapper.convertValue(
+                event.payload(), InstantBuyStartedEvent.class);
+
+        createPaymentUseCase.executeWithDeadline(
+                event.id(),
+                payload.auctionId(),
+                payload.productId(),
+                payload.buyerId(),
+                payload.sellerId(),
+                payload.price(),
+                payload.expiresAt()
+        );
+
+        log.info("Instant buy started event processed: auctionId={}, buyerId={}",
+                payload.auctionId(), payload.buyerId());
     }
 }

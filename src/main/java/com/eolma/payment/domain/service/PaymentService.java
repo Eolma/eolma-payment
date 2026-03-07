@@ -20,25 +20,26 @@ public class PaymentService {
 
     public Payment createPayment(Long auctionId, Long productId, Long buyerId, Long sellerId,
                                   Long amount, int deadlineHours) {
-        if (paymentRepository.existsByAuctionId(auctionId)) {
-            throw new EolmaException(ErrorType.PAYMENT_ALREADY_EXISTS,
-                    "Payment already exists for auction: " + auctionId);
-        }
+        return createPayment(auctionId, productId, buyerId, sellerId, amount,
+                LocalDateTime.now().plusHours(deadlineHours));
+    }
 
-        String orderId = generateOrderId(auctionId);
-        LocalDateTime deadline = LocalDateTime.now().plusHours(deadlineHours);
-
-        Payment payment = Payment.builder()
-                .auctionId(auctionId)
-                .productId(productId)
-                .buyerId(buyerId)
-                .sellerId(sellerId)
-                .amount(amount)
-                .tossOrderId(orderId)
-                .deadlineAt(deadline)
-                .build();
-
-        return paymentRepository.save(payment);
+    public Payment createPayment(Long auctionId, Long productId, Long buyerId, Long sellerId,
+                                  Long amount, LocalDateTime deadline) {
+        return paymentRepository.findByAuctionId(auctionId)
+                .orElseGet(() -> {
+                    String orderId = generateOrderId(auctionId);
+                    Payment payment = Payment.builder()
+                            .auctionId(auctionId)
+                            .productId(productId)
+                            .buyerId(buyerId)
+                            .sellerId(sellerId)
+                            .amount(amount)
+                            .tossOrderId(orderId)
+                            .deadlineAt(deadline)
+                            .build();
+                    return paymentRepository.save(payment);
+                });
     }
 
     public Payment findById(Long id) {
