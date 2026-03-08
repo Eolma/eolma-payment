@@ -8,5 +8,5 @@ public interface SettlementRepository {
 
     Settlement save(Settlement settlement);
 
-    Optional<Settlement> findByPaymentId(Long paymentId);
+    Optional<Settlement> findByPaymentId(String paymentId);
 }

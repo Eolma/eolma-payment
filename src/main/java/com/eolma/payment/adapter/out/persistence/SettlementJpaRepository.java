@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface SettlementJpaRepository extends JpaRepository<Settlement, Long>, SettlementRepository {
+public interface SettlementJpaRepository extends JpaRepository<Settlement, String>, SettlementRepository {
 
     @Override
-    Optional<Settlement> findByPaymentId(Long paymentId);
+    Optional<Settlement> findByPaymentId(String paymentId);
 }

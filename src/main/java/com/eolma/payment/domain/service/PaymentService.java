@@ -18,13 +18,13 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
 
-    public Payment createPayment(Long auctionId, Long productId, Long buyerId, Long sellerId,
+    public Payment createPayment(Long auctionId, Long productId, String buyerId, String sellerId,
                                   Long amount, int deadlineHours) {
         return createPayment(auctionId, productId, buyerId, sellerId, amount,
                 LocalDateTime.now().plusHours(deadlineHours));
     }
 
-    public Payment createPayment(Long auctionId, Long productId, Long buyerId, Long sellerId,
+    public Payment createPayment(Long auctionId, Long productId, String buyerId, String sellerId,
                                   Long amount, LocalDateTime deadline) {
         return paymentRepository.findByAuctionId(auctionId)
                 .orElseGet(() -> {
@@ -42,7 +42,7 @@ public class PaymentService {
                 });
     }
 
-    public Payment findById(Long id) {
+    public Payment findById(String id) {
         return paymentRepository.findById(id)
                 .orElseThrow(() -> new EolmaException(ErrorType.PAYMENT_NOT_FOUND,
                         "Payment not found: " + id));
@@ -60,7 +60,7 @@ public class PaymentService {
                         "Payment not found for orderId: " + orderId));
     }
 
-    public List<Payment> findByBuyerId(Long buyerId) {
+    public List<Payment> findByBuyerId(String buyerId) {
         return paymentRepository.findByBuyerIdOrderByCreatedAtDesc(buyerId);
     }
 

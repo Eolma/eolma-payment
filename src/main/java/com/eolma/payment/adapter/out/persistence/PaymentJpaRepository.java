@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface PaymentJpaRepository extends JpaRepository<Payment, Long>, PaymentRepository {
+public interface PaymentJpaRepository extends JpaRepository<Payment, String>, PaymentRepository {
 
     @Override
     Optional<Payment> findByAuctionId(Long auctionId);
@@ -21,7 +21,7 @@ public interface PaymentJpaRepository extends JpaRepository<Payment, Long>, Paym
     Optional<Payment> findByTossOrderId(String tossOrderId);
 
     @Override
-    List<Payment> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
+    List<Payment> findByBuyerIdOrderByCreatedAtDesc(String buyerId);
 
     @Override
     List<Payment> findByStatusAndDeadlineAtBefore(PaymentStatus status, LocalDateTime deadline);

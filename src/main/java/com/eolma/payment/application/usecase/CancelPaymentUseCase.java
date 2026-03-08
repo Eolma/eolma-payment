@@ -25,7 +25,7 @@ public class CancelPaymentUseCase {
     private final EventPublisher eventPublisher;
 
     @Transactional
-    public Payment execute(Long paymentId, String cancelReason) {
+    public Payment execute(String paymentId, String cancelReason) {
         Payment payment = paymentService.findById(paymentId);
 
         if (payment.getStatus() == PaymentStatus.CONFIRMED && payment.getTossPaymentKey() != null) {

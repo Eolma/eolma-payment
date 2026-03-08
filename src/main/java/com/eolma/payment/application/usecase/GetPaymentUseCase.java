@@ -15,7 +15,7 @@ public class GetPaymentUseCase {
     private final PaymentService paymentService;
 
     @Transactional(readOnly = true)
-    public Payment findById(Long id) {
+    public Payment findById(String id) {
         return paymentService.findById(id);
     }
 
@@ -25,7 +25,7 @@ public class GetPaymentUseCase {
     }
 
     @Transactional(readOnly = true)
-    public List<Payment> findByBuyerId(Long buyerId) {
+    public List<Payment> findByBuyerId(String buyerId) {
         return paymentService.findByBuyerId(buyerId);
     }
 }

@@ -28,7 +28,7 @@ public class PaymentController {
     @GetMapping("/auction/{auctionId}")
     public ResponseEntity<PaymentResponse> findByAuctionId(
             @PathVariable Long auctionId,
-            @RequestHeader("X-User-Id") Long userId) {
+            @RequestHeader("X-User-Id") String userId) {
         Payment payment = getPaymentUseCase.findByAuctionId(auctionId);
         validateAccess(payment, userId);
         return ResponseEntity.ok(PaymentResponse.from(payment));
@@ -43,8 +43,8 @@ public class PaymentController {
 
     @PostMapping("/{id}/cancel")
     public ResponseEntity<PaymentResponse> cancel(
-            @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable String id,
+            @RequestHeader("X-User-Id") String userId,
             @Valid @RequestBody CancelPaymentRequest request) {
         Payment payment = getPaymentUseCase.findById(id);
         validateBuyer(payment, userId);
@@ -54,7 +54,7 @@ public class PaymentController {
 
     @GetMapping("/me")
     public ResponseEntity<List<PaymentResponse>> findMyPayments(
-            @RequestHeader("X-User-Id") Long buyerId) {
+            @RequestHeader("X-User-Id") String buyerId) {
         List<Payment> payments = getPaymentUseCase.findByBuyerId(buyerId);
         List<PaymentResponse> responses = payments.stream()
                 .map(PaymentResponse::from)
@@ -64,20 +64,20 @@ public class PaymentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<PaymentResponse> findById(
-            @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long userId) {
+            @PathVariable String id,
+            @RequestHeader("X-User-Id") String userId) {
         Payment payment = getPaymentUseCase.findById(id);
         validateAccess(payment, userId);
         return ResponseEntity.ok(PaymentResponse.from(payment));
     }
 
-    private void validateAccess(Payment payment, Long userId) {
+    private void validateAccess(Payment payment, String userId) {
         if (!payment.getBuyerId().equals(userId) && !payment.getSellerId().equals(userId)) {
             throw new EolmaException(ErrorType.FORBIDDEN, "Access denied to this payment");
         }
     }
 
-    private void validateBuyer(Payment payment, Long userId) {
+    private void validateBuyer(Payment payment, String userId) {
         if (!payment.getBuyerId().equals(userId)) {
             throw new EolmaException(ErrorType.FORBIDDEN, "Only buyer can cancel this payment");
         }

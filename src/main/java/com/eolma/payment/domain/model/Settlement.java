@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "settlement")
@@ -15,14 +16,14 @@ import java.time.LocalDateTime;
 public class Settlement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 36)
+    private String id;
 
     @Column(nullable = false, unique = true)
-    private Long paymentId;
+    private String paymentId;
 
     @Column(nullable = false)
-    private Long sellerId;
+    private String sellerId;
 
     @Column(nullable = false)
     private Long totalAmount;
@@ -47,10 +48,13 @@ public class Settlement {
 
     @PrePersist
     protected void onCreate() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         this.createdAt = LocalDateTime.now();
     }
 
-    public static Settlement create(Long paymentId, Long sellerId, Long totalAmount, BigDecimal feeRate) {
+    public static Settlement create(String paymentId, String sellerId, Long totalAmount, BigDecimal feeRate) {
         Settlement settlement = new Settlement();
         settlement.paymentId = paymentId;
         settlement.sellerId = sellerId;

@@ -25,14 +25,14 @@ public class CreatePaymentUseCase {
 
     @Transactional
     public Payment execute(String eventId, Long auctionId, Long productId,
-                           Long buyerId, Long sellerId, Long amount) {
+                           String buyerId, String sellerId, Long amount) {
         return executeWithDeadline(eventId, auctionId, productId, buyerId, sellerId, amount,
                 LocalDateTime.now().plusHours(deadlineHours));
     }
 
     @Transactional
     public Payment executeWithDeadline(String eventId, Long auctionId, Long productId,
-                                        Long buyerId, Long sellerId, Long amount,
+                                        String buyerId, String sellerId, Long amount,
                                         LocalDateTime deadline) {
         Payment payment = paymentService.createPayment(
                 auctionId, productId, buyerId, sellerId, amount, deadline);

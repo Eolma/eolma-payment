@@ -6,11 +6,11 @@ import com.eolma.payment.domain.model.PaymentStatus;
 import java.time.LocalDateTime;
 
 public record PaymentResponse(
-        Long id,
+        String id,
         Long auctionId,
         Long productId,
-        Long buyerId,
-        Long sellerId,
+        String buyerId,
+        String sellerId,
         Long amount,
         PaymentStatus status,
         String tossOrderId,

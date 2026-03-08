@@ -12,7 +12,7 @@ public class SettlementService {
     private final SettlementRepository settlementRepository;
     private final BigDecimal feeRate;
 
-    public Settlement createSettlement(Long paymentId, Long sellerId, Long totalAmount) {
+    public Settlement createSettlement(String paymentId, String sellerId, Long totalAmount) {
         Settlement settlement = Settlement.create(paymentId, sellerId, totalAmount, feeRate);
         return settlementRepository.save(settlement);
     }

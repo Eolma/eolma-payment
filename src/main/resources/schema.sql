@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS payment (
-    id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id              VARCHAR(36) PRIMARY KEY,
     auction_id      BIGINT NOT NULL UNIQUE,
     product_id      BIGINT NOT NULL,
-    buyer_id        BIGINT NOT NULL,
-    seller_id       BIGINT NOT NULL,
+    buyer_id        VARCHAR(36) NOT NULL,
+    seller_id       VARCHAR(36) NOT NULL,
     amount          BIGINT NOT NULL,
     status          VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     toss_payment_key VARCHAR(200),
@@ -23,9 +23,9 @@ CREATE INDEX IF NOT EXISTS idx_payment_seller ON payment(seller_id);
 CREATE INDEX IF NOT EXISTS idx_payment_status ON payment(status);
 
 CREATE TABLE IF NOT EXISTS settlement (
-    id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    payment_id      BIGINT NOT NULL UNIQUE,
-    seller_id       BIGINT NOT NULL,
+    id              VARCHAR(36) PRIMARY KEY,
+    payment_id      VARCHAR(36) NOT NULL UNIQUE,
+    seller_id       VARCHAR(36) NOT NULL,
     total_amount    BIGINT NOT NULL,
     fee_rate        DECIMAL(5,4) NOT NULL,
     fee_amount      BIGINT NOT NULL,

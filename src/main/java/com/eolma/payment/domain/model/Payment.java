@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "payment")
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 public class Payment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(length = 36)
+    private String id;
 
     @Column(nullable = false, unique = true)
     private Long auctionId;
@@ -25,10 +26,10 @@ public class Payment {
     private Long productId;
 
     @Column(nullable = false)
-    private Long buyerId;
+    private String buyerId;
 
     @Column(nullable = false)
-    private Long sellerId;
+    private String sellerId;
 
     @Column(nullable = false)
     private Long amount;
@@ -64,6 +65,9 @@ public class Payment {
 
     @PrePersist
     protected void onCreate() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -74,7 +78,7 @@ public class Payment {
     }
 
     @Builder
-    public Payment(Long auctionId, Long productId, Long buyerId, Long sellerId,
+    public Payment(Long auctionId, Long productId, String buyerId, String sellerId,
                    Long amount, String tossOrderId, LocalDateTime deadlineAt) {
         this.auctionId = auctionId;
         this.productId = productId;

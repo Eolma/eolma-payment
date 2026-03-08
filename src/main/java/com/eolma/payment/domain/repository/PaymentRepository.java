@@ -11,7 +11,7 @@ public interface PaymentRepository {
 
     Payment save(Payment payment);
 
-    Optional<Payment> findById(Long id);
+    Optional<Payment> findById(String id);
 
     Optional<Payment> findByAuctionId(Long auctionId);
 
@@ -19,7 +19,7 @@ public interface PaymentRepository {
 
     Optional<Payment> findByTossOrderId(String tossOrderId);
 
-    List<Payment> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
+    List<Payment> findByBuyerIdOrderByCreatedAtDesc(String buyerId);
 
     List<Payment> findByStatusAndDeadlineAtBefore(PaymentStatus status, LocalDateTime deadline);
 }
