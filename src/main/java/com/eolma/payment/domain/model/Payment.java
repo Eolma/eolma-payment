@@ -6,8 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import com.eolma.common.id.TsidGenerator;
+
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "payment")
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class Payment {
 
     @Id
-    @Column(length = 36)
+    @Column(length = 13)
     private String id;
 
     @Column(nullable = false, unique = true)
@@ -66,7 +67,7 @@ public class Payment {
     @PrePersist
     protected void onCreate() {
         if (this.id == null) {
-            this.id = UUID.randomUUID().toString();
+            this.id = TsidGenerator.generate();
         }
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

@@ -5,9 +5,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import com.eolma.common.id.TsidGenerator;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "settlement")
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class Settlement {
 
     @Id
-    @Column(length = 36)
+    @Column(length = 13)
     private String id;
 
     @Column(nullable = false, unique = true)
@@ -49,7 +50,7 @@ public class Settlement {
     @PrePersist
     protected void onCreate() {
         if (this.id == null) {
-            this.id = UUID.randomUUID().toString();
+            this.id = TsidGenerator.generate();
         }
         this.createdAt = LocalDateTime.now();
     }
