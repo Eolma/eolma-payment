@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS payment (
     buyer_id        VARCHAR(13) NOT NULL,
     seller_id       VARCHAR(13) NOT NULL,
     amount          BIGINT NOT NULL,
+    payment_type    VARCHAR(20) NOT NULL,
     status          VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     toss_payment_key VARCHAR(200),
     toss_order_id   VARCHAR(100) NOT NULL UNIQUE,

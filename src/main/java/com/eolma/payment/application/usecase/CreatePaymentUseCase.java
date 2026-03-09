@@ -1,6 +1,7 @@
 package com.eolma.payment.application.usecase;
 
 import com.eolma.payment.domain.model.Payment;
+import com.eolma.payment.domain.model.PaymentType;
 import com.eolma.payment.domain.model.ProcessedEvent;
 import com.eolma.payment.domain.repository.ProcessedEventRepository;
 import com.eolma.payment.domain.service.PaymentService;
@@ -26,21 +27,28 @@ public class CreatePaymentUseCase {
     @Transactional
     public Payment execute(String eventId, Long auctionId, Long productId,
                            String buyerId, String sellerId, Long amount) {
-        return executeWithDeadline(eventId, auctionId, productId, buyerId, sellerId, amount,
-                LocalDateTime.now().plusHours(deadlineHours));
+        return executeInternal(eventId, auctionId, productId, buyerId, sellerId, amount,
+                PaymentType.AUCTION_WIN, LocalDateTime.now().plusHours(deadlineHours));
     }
 
     @Transactional
     public Payment executeWithDeadline(String eventId, Long auctionId, Long productId,
                                         String buyerId, String sellerId, Long amount,
                                         LocalDateTime deadline) {
+        return executeInternal(eventId, auctionId, productId, buyerId, sellerId, amount,
+                PaymentType.INSTANT_BUY, deadline);
+    }
+
+    private Payment executeInternal(String eventId, Long auctionId, Long productId,
+                                     String buyerId, String sellerId, Long amount,
+                                     PaymentType paymentType, LocalDateTime deadline) {
         Payment payment = paymentService.createPayment(
-                auctionId, productId, buyerId, sellerId, amount, deadline);
+                auctionId, productId, buyerId, sellerId, amount, paymentType, deadline);
 
         processedEventRepository.save(new ProcessedEvent(eventId));
 
-        log.info("Payment created: paymentId={}, auctionId={}, buyerId={}, amount={}, deadline={}",
-                payment.getId(), auctionId, buyerId, amount, deadline);
+        log.info("Payment created: paymentId={}, auctionId={}, buyerId={}, amount={}, type={}, deadline={}",
+                payment.getId(), auctionId, buyerId, amount, paymentType, deadline);
 
         return payment;
     }

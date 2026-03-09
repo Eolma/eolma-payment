@@ -37,6 +37,10 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    private PaymentType paymentType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private PaymentStatus status;
 
     @Column(length = 200)
@@ -80,12 +84,13 @@ public class Payment {
 
     @Builder
     public Payment(Long auctionId, Long productId, String buyerId, String sellerId,
-                   Long amount, String tossOrderId, LocalDateTime deadlineAt) {
+                   Long amount, String tossOrderId, PaymentType paymentType, LocalDateTime deadlineAt) {
         this.auctionId = auctionId;
         this.productId = productId;
         this.buyerId = buyerId;
         this.sellerId = sellerId;
         this.amount = amount;
+        this.paymentType = paymentType;
         this.status = PaymentStatus.PENDING;
         this.tossOrderId = tossOrderId;
         this.deadlineAt = deadlineAt;

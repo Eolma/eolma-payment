@@ -4,6 +4,7 @@ import com.eolma.common.exception.EolmaException;
 import com.eolma.common.exception.ErrorType;
 import com.eolma.payment.domain.model.Payment;
 import com.eolma.payment.domain.model.PaymentStatus;
+import com.eolma.payment.domain.model.PaymentType;
 import com.eolma.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -19,13 +20,13 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     public Payment createPayment(Long auctionId, Long productId, String buyerId, String sellerId,
-                                  Long amount, int deadlineHours) {
+                                  Long amount, PaymentType paymentType, int deadlineHours) {
         return createPayment(auctionId, productId, buyerId, sellerId, amount,
-                LocalDateTime.now().plusHours(deadlineHours));
+                paymentType, LocalDateTime.now().plusHours(deadlineHours));
     }
 
     public Payment createPayment(Long auctionId, Long productId, String buyerId, String sellerId,
-                                  Long amount, LocalDateTime deadline) {
+                                  Long amount, PaymentType paymentType, LocalDateTime deadline) {
         return paymentRepository.findByAuctionId(auctionId)
                 .orElseGet(() -> {
                     String orderId = generateOrderId(auctionId);
@@ -35,6 +36,7 @@ public class PaymentService {
                             .buyerId(buyerId)
                             .sellerId(sellerId)
                             .amount(amount)
+                            .paymentType(paymentType)
                             .tossOrderId(orderId)
                             .deadlineAt(deadline)
                             .build();
